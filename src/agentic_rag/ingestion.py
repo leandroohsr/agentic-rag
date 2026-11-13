@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_unstructured import UnstructuredLoader
 from langchain_chroma import Chroma
 
-from langchain_openai import OpenAIEmbeddings
+from langchain_ollama import OllamaEmbeddings
 
 load_dotenv()
 
@@ -36,17 +36,17 @@ doc_splits = text_splitter.split_documents(docs)
 
 
 # Embed the documents and store them in the Chroma vector database
-vectorstore = Chroma.from_documents(
-    documents = doc_splits,
-    collection_name="rag-chroma",
-    embedding = OpenAIEmbeddings(),
-    persist_directory="./.chroma"
-)
+# vectorstore = Chroma.from_documents(
+#     documents = doc_splits,
+#     collection_name="rag-chroma",
+#     embedding = OllamaEmbeddings(model="nomic-embed-text"),
+#     persist_directory="./.chroma"
+# )
 
 # Create a retriever from the vectorstore
 retriever = Chroma(
     collection_name="rag-chroma",
     persist_directory="./.chroma",
-    embedding_function=OpenAIEmbeddings()
-).as_retriever()
+    embedding_function=OllamaEmbeddings(model="nomic-embed-text")
+).as_retriever(search_kwargs={"k": 4})
 
